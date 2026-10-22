@@ -1,122 +1,195 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React, { useState, useEffect, useCallback } from 'react';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import CelestialCatalog from './components/CelestialCatalog';
+import PlanetModal from './components/PlanetModal';
+import GravitySimulator from './components/GravitySimulator';
+import MissionLaunchCenter from './components/MissionLaunchCenter';
+import ReactDidacticLab from './components/ReactDidacticLab';
+import Footer from './components/Footer';
+import { PLANETS, INITIAL_MISSIONS } from './data/spaceData';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  // Navigation active tab: 'catalog' | 'simulator' | 'launch' | 'didactic'
+  const [activeTab, setActiveTab] = useState('catalog');
+
+  // Favorites state persisted in localStorage
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      const saved = localStorage.getItem('stellar_favorites');
+      return saved ? JSON.parse(saved) : ['terra', 'marte', 'europa'];
+    } catch {
+      return ['terra', 'marte', 'europa'];
+    }
+  });
+
+  // Missions state persisted in localStorage
+  const [missions, setMissions] = useState(() => {
+    try {
+      const saved = localStorage.getItem('stellar_missions');
+      return saved ? JSON.parse(saved) : INITIAL_MISSIONS;
+    } catch {
+      return INITIAL_MISSIONS;
+    }
+  });
+
+  // Modal inspection state
+  const [inspectingPlanet, setInspectingPlanet] = useState(null);
+
+  // Preselected planet for launch trigger
+  const [launchPresetId, setLaunchPresetId] = useState(null);
+
+  // Global Virtual DOM reconciliation tracker
+  const [vdomCounter, setVdomCounter] = useState(1);
+
+  // Sync favorites with localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('stellar_favorites', JSON.stringify(favorites));
+    } catch (err) {
+      console.warn('LocalStorage save error:', err);
+    }
+  }, [favorites]);
+
+  // Sync missions with localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('stellar_missions', JSON.stringify(missions));
+    } catch (err) {
+      console.warn('LocalStorage save error:', err);
+    }
+  }, [missions]);
+
+  // Favorite toggle handler
+  const handleToggleFavorite = useCallback((planetId) => {
+    setFavorites((prev) => {
+      const isAlready = prev.includes(planetId);
+      const next = isAlready ? prev.filter((id) => id !== planetId) : [...prev, planetId];
+      return next;
+    });
+    setVdomCounter((c) => c + 1);
+  }, []);
+
+  // Add new mission handler
+  const handleAddMission = useCallback((newMission) => {
+    setMissions((prev) => [newMission, ...prev]);
+    setVdomCounter((c) => c + 1);
+  }, []);
+
+  // Remove / Decommission mission
+  const handleRemoveMission = useCallback((missionId) => {
+    setMissions((prev) => prev.filter((m) => m.id !== missionId));
+    setVdomCounter((c) => c + 1);
+  }, []);
+
+  // Ping telemetry handler
+  const handlePingMission = useCallback((missionId) => {
+    setMissions((prev) =>
+      prev.map((m) => {
+        if (m.id === missionId) {
+          return {
+            ...m,
+            signalStrength: Math.min(m.signalStrength + 5, 100),
+            progress: Math.min(m.progress + 2, 100)
+          };
+        }
+        return m;
+      })
+    );
+    setVdomCounter((c) => c + 1);
+  }, []);
+
+  // Switch to launch center with preset target
+  const handleSelectForLaunch = useCallback((planetId) => {
+    setLaunchPresetId(planetId);
+    setActiveTab('launch');
+    window.scrollTo({ top: 350, behavior: 'smooth' });
+  }, []);
+
+  // Virtual DOM reconciliation bump from simulator
+  const handleVirtualDomUpdate = useCallback((count) => {
+    setVdomCounter((c) => c + 1);
+  }, []);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-layout">
+      {/* Navigation Header */}
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        favoritesCount={favorites.length}
+        missionsCount={missions.length}
+        vdomReconciliations={vdomCounter}
+      />
 
-      <div className="ticks"></div>
+      <main className="main-content">
+        {/* Hero Section */}
+        <Hero
+          totalPlanets={PLANETS.length}
+          totalMissions={missions.length}
+          vdomCycles={vdomCounter}
+          onExploreClick={() => {
+            setActiveTab('catalog');
+            const el = document.getElementById('catalogo');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          onSimulateClick={() => {
+            setActiveTab('simulator');
+            const el = document.getElementById('simulador');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Dynamic Tab Views */}
+        <div className="container">
+          {activeTab === 'catalog' && (
+            <CelestialCatalog
+              planets={PLANETS}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+              onInspectPlanet={(planet) => setInspectingPlanet(planet)}
+            />
+          )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          {activeTab === 'simulator' && (
+            <GravitySimulator
+              planets={PLANETS}
+              onVirtualDomUpdate={handleVirtualDomUpdate}
+            />
+          )}
+
+          {activeTab === 'launch' && (
+            <MissionLaunchCenter
+              planets={PLANETS}
+              missions={missions}
+              onAddMission={handleAddMission}
+              onRemoveMission={handleRemoveMission}
+              onPingMission={handlePingMission}
+              presetPlanetId={launchPresetId}
+            />
+          )}
+
+          {activeTab === 'didactic' && (
+            <ReactDidacticLab />
+          )}
+        </div>
+      </main>
+
+      {/* Detail Modal */}
+      {inspectingPlanet && (
+        <PlanetModal
+          planet={inspectingPlanet}
+          onClose={() => setInspectingPlanet(null)}
+          onSelectForLaunch={handleSelectForLaunch}
+        />
+      )}
+
+      {/* Footer */}
+      <Footer onNavigate={(tab) => {
+        setActiveTab(tab);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }} />
+    </div>
+  );
 }
-
-export default App
