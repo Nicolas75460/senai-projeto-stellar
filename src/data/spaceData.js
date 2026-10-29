@@ -467,5 +467,205 @@ function ListaMissoes() {
       "Curto-circuito lógico (cond && <A/>) para exibir conteúdo apenas quando verdadeiro.",
       "Permite tratar listas vazias ('Nenhum resultado encontrado')."
     ]
+  },
+  {
+    id: "usestate",
+    number: "07",
+    title: "State e o Hook useState",
+    category: "Reatividade & Estado",
+    summary: "Guarda informações internas mutáveis do componente e aciona a re-renderização do React quando alterado.",
+    codeExample: `import { useState } from "react";
+
+function ContadorSondas() {
+  // valor atual e função atualizadora
+  const [sondas, setSondas] = useState(5);
+
+  return (
+    <div>
+      <p>Sondas ativas: {sondas}</p>
+      <button onClick={() => setSondas(sondas + 1)}>
+        Lançar Nova Sonda
+      </button>
+    </div>
+  );
+}`,
+    keyPoints: [
+      "Variáveis locais normais perdem o valor a cada re-renderização e não atualizam a tela.",
+      "useState preserva dados entre renderizações e comanda atualizações do Virtual DOM.",
+      "Regras dos Hooks: chame apenas no topo do componente, nunca dentro de if ou loops.",
+      "Retorna sempre [valor, setValor] via desestruturação de array."
+    ]
+  },
+  {
+    id: "formularios",
+    number: "08",
+    title: "Formulários & Campos Controlados",
+    category: "Entrada de Dados",
+    summary: "Padronização onde o estado do React é a fonte única da verdade para o valor dos campos, usando value e onChange.",
+    codeExample: `import { useState } from "react";
+
+function FormularioMissao() {
+  const [nome, setNome] = useState("");
+
+  function handleSubmit(e) {
+    e.preventDefault(); // Impede o reload da página
+    if (!nome.trim()) return alert("Nome obrigatório!");
+    alert("Missão enviada: " + nome);
+    setNome("");
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+        placeholder="Nome da missão..."
+      />
+      <button type="submit">Cadastrar</button>
+    </form>
+  );
+}`,
+    keyPoints: [
+      "Campos controlados ligam value={estado} e onChange={e => setEstado(e.target.value)}.",
+      "e.preventDefault() impede o recarregamento automático padrão da página pelo navegador.",
+      "Permite validação de campos em tempo real e bloqueio condicional de envio.",
+      "Facilita limpeza e reset dos inputs após a submissão bem-sucedida."
+    ]
+  },
+  {
+    id: "useeffect",
+    number: "09",
+    title: "Hook useEffect & Limpeza (Cleanup)",
+    category: "Efeitos Colaterais",
+    summary: "Executa sincronizações com sistemas externos (APIs, timers, títulos, listeners) com controle rigoroso de ciclo de vida e cleanup.",
+    codeExample: `import { useEffect, useState } from "react";
+
+function RastreadorSatelite() {
+  const [coords, setCoords] = useState(null);
+
+  useEffect(() => {
+    // 1. Efeito: temporizador de busca de telemetria
+    const intervalId = setInterval(() => {
+      console.log("Sincronizando telemetria com a estação...");
+    }, 5000);
+
+    // 2. Função de limpeza (cleanup) para evitar vazamento de memória!
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []); // Executa na montagem e limpa na desmontagem
+
+  return <div>Rastreamento Ativo</div>;
+}`,
+    keyPoints: [
+      "Sem array de dependências: executa a cada nova renderização (risco de loops).",
+      "Array vazio []: executa apenas na montagem inicial do componente.",
+      "Array com dependências [id]: executa na montagem e sempre que a dependência mudar.",
+      "Função retornada (cleanup): libera timers, cancela requisições e remove event listeners."
+    ]
+  },
+  {
+    id: "consumo-api",
+    number: "10",
+    title: "Consumo de APIs com fetch (GET & POST)",
+    category: "Comunicação Externa",
+    summary: "Requisições HTTP assíncronas para carregar ou persistir dados em servidores, com tratamento de loading e erro.",
+    codeExample: `// Requisição GET assíncrona com try/catch
+async function carregarTelemetria() {
+  try {
+    const res = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
+    if (!res.ok) throw new Error("Erro HTTP: " + res.status);
+    const dados = await res.json();
+    return dados;
+  } catch (erro) {
+    console.error("Falha na consulta:", erro);
+  }
+}
+
+// Envio de dados com POST
+await fetch("/api/relatorios", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ sonda: "Pioneer", status: "OK" })
+});`,
+    keyPoints: [
+      "Sempre verifique response.ok para capturar códigos de erro HTTP 4xx e 5xx.",
+      "Gerencie estados visuais de Carregamento (Loading), Erro e Dados carregados.",
+      "Envio com POST exige method, headers com Content-Type e body serializado em JSON.",
+      "Nunca exponha chaves secretas ou credenciais confidenciais no código do cliente."
+    ]
+  },
+  {
+    id: "react-router",
+    number: "11",
+    title: "React Router & useParams",
+    category: "Roteamento SPA",
+    summary: "Navegação declarativa por URLs sem recarregar o documento HTML, com suporte a rotas dinâmicas e parâmetros de rota.",
+    codeExample: `import { BrowserRouter, Routes, Route, Link, useParams } from "react-router-dom";
+
+// Componente de detalhe com rota dinâmica /planeta/:id
+function DetalhePlaneta() {
+  const { id } = useParams(); // Obtém o parâmetro ":id" da URL atual
+  return <h2>Corpo Celeste: {id}</h2>;
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <nav>
+        <Link to="/">Início</Link>
+        <Link to="/planeta/marte">Marte</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/planeta/:id" element={<DetalhePlaneta />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}`,
+    keyPoints: [
+      "BrowserRouter envolve a aplicação e monitora a URL do navegador.",
+      "Routes avalia as rotas filhas e Route mapeia path para um elemento JSX.",
+      "Link e NavLink permitem navegação instantânea em SPAs sem reload.",
+      "useParams() extrai parâmetros dinâmicos da URL definidos como :parametro."
+    ]
+  }
+];
+
+export const INITIAL_OBSERVATIONS = [
+  {
+    id: 101,
+    astronomer: "Dra. Ellen Ripley",
+    targetObject: "Marte - Monte Olimpo",
+    frequency: "1420.405 MHz (Linha do Hidrogênio)",
+    telescope: "Radiotelescópio Deep Space ALMA",
+    notes: "Anomalia eletromagnética detectada no setor norte. Assinatura compatível com reflexão ionosférica.",
+    timestamp: "2026-10-28 21:15 UTC",
+    priority: "Alta",
+    verified: true
+  },
+  {
+    id: 102,
+    astronomer: "Dr. Carl Sagan",
+    targetObject: "Europa (Lua de Júpiter)",
+    frequency: "8415.000 MHz (Deep Space Band X)",
+    telescope: "Observatório Orbital James Webb II",
+    notes: "Espectroscopia de vapor d'água confirmada sobre a crosta de gelo na região sul.",
+    timestamp: "2026-10-28 20:42 UTC",
+    priority: "Crítica",
+    verified: true
+  },
+  {
+    id: 103,
+    astronomer: "Nícolas Oliveira",
+    targetObject: "Kepler-452b",
+    frequency: "2295.000 MHz (Banda S)",
+    telescope: "Matriz de Antenas SENAI Space",
+    notes: "Sinal de calibração enviado para antena trans-orbital. Telemetria nominal.",
+    timestamp: "2026-10-28 19:30 UTC",
+    priority: "Normal",
+    verified: true
   }
 ];
