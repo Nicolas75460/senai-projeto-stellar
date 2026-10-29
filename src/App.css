@@ -2190,3 +2190,704 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ==========================================================================
+   Aula 09 — React 02: Rotas, Consumo de APIs, Hooks & Formulários
+   ========================================================================== */
+
+/* Page View Wrapper */
+.page-view-wrapper {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Timer Pill in Navbar */
+.timer-pill {
+  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.text-cyan {
+  color: var(--accent-cyan);
+}
+
+.text-teal {
+  color: var(--accent-teal);
+}
+
+.text-purple {
+  color: var(--accent-purple);
+}
+
+.text-amber {
+  color: var(--accent-amber);
+}
+
+.text-rose {
+  color: var(--accent-rose);
+}
+
+.text-emerald {
+  color: #34d399;
+}
+
+/* Split Card Footer (PlanetCard) */
+.card-footer-split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.card-footer-split .btn-inspect {
+  flex: 1;
+}
+
+.btn-route-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-route-link:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: var(--accent-cyan);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* Form Validation Styles */
+.field-error-msg {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--accent-rose);
+  margin-top: 0.35rem;
+  font-weight: 500;
+}
+
+.input-error {
+  border-color: rgba(244, 63, 94, 0.8) !important;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.25) !important;
+}
+
+/* ==========================================================================
+   Planet Detail Page (/planeta/:id) — useParams
+   ========================================================================== */
+.planet-detail-page {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.route-breadcrumb-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.back-link:hover {
+  color: var(--accent-cyan);
+  transform: translateX(-3px);
+}
+
+.route-tag {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.planet-page-hero {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.planet-page-preview {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.preview-sphere.large {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  box-shadow: 0 0 45px rgba(255, 255, 255, 0.25);
+  position: relative;
+  z-index: 2;
+  transition: transform 0.5s ease;
+}
+
+.preview-ring.large {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  height: 56px;
+  border: 7px solid rgba(251, 191, 36, 0.65);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  pointer-events: none;
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.35);
+  z-index: 3;
+}
+
+.planet-page-info {
+  flex: 1;
+}
+
+.planet-page-title {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0 0.25rem 0;
+  color: var(--text-main);
+}
+
+.planet-page-subtitle {
+  font-size: 1.15rem;
+  color: var(--accent-cyan);
+  margin-bottom: 1rem;
+}
+
+.planet-page-description {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-width: 720px;
+}
+
+.planet-page-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.planet-page-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.page-card {
+  padding: 1.75rem;
+}
+
+.card-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.spec-props-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.spec-prop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+}
+
+.prop-name {
+  color: var(--text-muted);
+}
+
+.prop-value {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Weight Calculator */
+.controlled-input-box {
+  margin-top: 1.25rem;
+}
+
+.weight-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.weight-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.weight-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.weight-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.weight-arrow {
+  font-size: 1.3rem;
+  color: var(--accent-cyan);
+}
+
+.weight-hint {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--accent-teal);
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Atmospheric Breakdown Bars */
+.gas-bars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.gas-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gas-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.gas-name {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.gas-perc {
+  color: var(--accent-cyan);
+}
+
+.gas-bar-track {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.gas-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+}
+
+/* ==========================================================================
+   Observatory & API Consumption Page (/api-observatorio)
+   ========================================================================== */
+.observatory-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.iss-tracker-card {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.tracker-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tracker-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.tracker-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.15rem;
+}
+
+.tracker-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.refresh-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 9999px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: var(--accent-cyan);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.refresh-pill:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.25);
+  color: #fff;
+}
+
+.refresh-pill.spinning svg {
+  animation: spin 1s linear infinite;
+}
+
+.api-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  gap: 1rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.spinner-orbit {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(56, 189, 248, 0.15);
+  border-top-color: var(--accent-cyan);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.api-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem;
+  text-align: center;
+  gap: 1rem;
+}
+
+.live-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #34d399;
+  font-size: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.last-sync {
+  margin-left: auto;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.iss-grid-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.spec-metric-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metric-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0.2rem 0;
+}
+
+.metric-detail {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.api-code-note {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Post Form Card */
+.post-form-card {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.observation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 1.25rem;
+}
+
+.btn-post-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.post-feedback-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--radius-sm);
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.post-feedback-alert.success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+
+.post-feedback-alert.error {
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #fda4af;
+}
+
+/* Observation Stream Grid */
+.observation-stream-section {
+  padding: 2rem;
+}
+
+.observations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.obs-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid var(--border-subtle);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.obs-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.obs-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.obs-target-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.obs-target-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.obs-astronomer {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.obs-notes {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.obs-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.6rem;
+}
+
+/* ==========================================================================
+   404 Not Found Page
+   ========================================================================== */
+.not-found-container {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+}
+
+.not-found-card {
+  max-width: 520px;
+  text-align: center;
+  padding: 3.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.not-found-number {
+  font-size: 6rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.04em;
+}
+
+.not-found-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.not-found-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   Responsive Updates for New Views
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .observatory-layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .planet-page-hero {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .planet-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .planet-page-cta {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .iss-grid-specs {
+    grid-template-columns: 1fr;
+  }
+
+  .observations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .planet-page-title {
+    font-size: 2.2rem;
+  }
+}

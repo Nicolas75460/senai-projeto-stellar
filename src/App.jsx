@@ -1,20 +1,33 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import CelestialCatalog from './components/CelestialCatalog';
 import PlanetModal from './components/PlanetModal';
 import GravitySimulator from './components/GravitySimulator';
 import MissionLaunchCenter from './components/MissionLaunchCenter';
 import ReactDidacticLab from './components/ReactDidacticLab';
 import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import PlanetDetailPage from './pages/PlanetDetailPage';
+import ObservatoryApiPage from './pages/ObservatoryApiPage';
+import NotFoundPage from './pages/NotFoundPage';
 import { PLANETS, INITIAL_MISSIONS } from './data/spaceData';
 import './App.css';
 
-export default function App() {
-  // Navigation active tab: 'catalog' | 'simulator' | 'launch' | 'didactic'
-  const [activeTab, setActiveTab] = useState('catalog');
+// Componente utilitário que garante rolagem para o topo em cada transição de rota
+function ScrollToTop() {
+  const { pathname } = useLocation();
 
-  // Favorites state persisted in localStorage
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
+
+  return null;
+}
+
+export default function App() {
+  const navigate = useNavigate();
+
+  // 1. Estado de Favoritos persistido no LocalStorage (Aula 08 & 09)
   const [favorites, setFavorites] = useState(() => {
     try {
       const saved = localStorage.getItem('stellar_favorites');
@@ -24,7 +37,7 @@ export default function App() {
     }
   });
 
-  // Missions state persisted in localStorage
+  // 2. Estado de Missões ativas persistido no LocalStorage
   const [missions, setMissions] = useState(() => {
     try {
       const saved = localStorage.getItem('stellar_missions');
@@ -34,16 +47,16 @@ export default function App() {
     }
   });
 
-  // Modal inspection state
+  // 3. Modal de inspeção rápida
   const [inspectingPlanet, setInspectingPlanet] = useState(null);
 
-  // Preselected planet for launch trigger
+  // 4. Planeta pré-selecionado para lançamento
   const [launchPresetId, setLaunchPresetId] = useState(null);
 
-  // Global Virtual DOM reconciliation tracker
+  // 5. Contador de reconciliações do Virtual DOM (didático)
   const [vdomCounter, setVdomCounter] = useState(1);
 
-  // Sync favorites with localStorage
+  // Efeito colateral com useEffect: sincroniza favoritos no localStorage
   useEffect(() => {
     try {
       localStorage.setItem('stellar_favorites', JSON.stringify(favorites));
@@ -52,7 +65,7 @@ export default function App() {
     }
   }, [favorites]);
 
-  // Sync missions with localStorage
+  // Efeito colateral com useEffect: sincroniza missões no localStorage
   useEffect(() => {
     try {
       localStorage.setItem('stellar_missions', JSON.stringify(missions));
@@ -61,29 +74,28 @@ export default function App() {
     }
   }, [missions]);
 
-  // Favorite toggle handler
+  // Alternador de favoritos (imutabilidade com prev state)
   const handleToggleFavorite = useCallback((planetId) => {
     setFavorites((prev) => {
       const isAlready = prev.includes(planetId);
-      const next = isAlready ? prev.filter((id) => id !== planetId) : [...prev, planetId];
-      return next;
+      return isAlready ? prev.filter((id) => id !== planetId) : [...prev, planetId];
     });
     setVdomCounter((c) => c + 1);
   }, []);
 
-  // Add new mission handler
+  // Adicionar nova missão espacial
   const handleAddMission = useCallback((newMission) => {
     setMissions((prev) => [newMission, ...prev]);
     setVdomCounter((c) => c + 1);
   }, []);
 
-  // Remove / Decommission mission
+  // Decomissionar/remover missão
   const handleRemoveMission = useCallback((missionId) => {
     setMissions((prev) => prev.filter((m) => m.id !== missionId));
     setVdomCounter((c) => c + 1);
   }, []);
 
-  // Ping telemetry handler
+  // Ping de telemetria
   const handlePingMission = useCallback((missionId) => {
     setMissions((prev) =>
       prev.map((m) => {
@@ -100,83 +112,111 @@ export default function App() {
     setVdomCounter((c) => c + 1);
   }, []);
 
-  // Switch to launch center with preset target
+  // Configura missão e navega para o Centro de Lançamentos via React Router navigate()
   const handleSelectForLaunch = useCallback((planetId) => {
     setLaunchPresetId(planetId);
-    setActiveTab('launch');
-    window.scrollTo({ top: 350, behavior: 'smooth' });
-  }, []);
+    navigate('/lancamentos');
+  }, [navigate]);
 
-  // Virtual DOM reconciliation bump from simulator
-  const handleVirtualDomUpdate = useCallback((count) => {
+  // Bumper de reconciliação para demonstração
+  const handleVirtualDomUpdate = useCallback(() => {
     setVdomCounter((c) => c + 1);
   }, []);
 
   return (
     <div className="app-layout">
-      {/* Navigation Header */}
+      {/* Scroll to Top on route change */}
+      <ScrollToTop />
+
+      {/* Navigation Header com React Router NavLink */}
       <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
         favoritesCount={favorites.length}
         missionsCount={missions.length}
         vdomReconciliations={vdomCounter}
       />
 
       <main className="main-content">
-        {/* Hero Section */}
-        <Hero
-          totalPlanets={PLANETS.length}
-          totalMissions={missions.length}
-          vdomCycles={vdomCounter}
-          onExploreClick={() => {
-            setActiveTab('catalog');
-            const el = document.getElementById('catalogo');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-          onSimulateClick={() => {
-            setActiveTab('simulator');
-            const el = document.getElementById('simulador');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-        />
+        <Routes>
+          {/* Rota Raiz: Catálogo Principal & Hero */}
+          <Route
+            path="/"
+            element={
+              <HomePage
+                planets={PLANETS}
+                favorites={favorites}
+                missionsCount={missions.length}
+                vdomCounter={vdomCounter}
+                onToggleFavorite={handleToggleFavorite}
+                onInspectPlanet={(planet) => setInspectingPlanet(planet)}
+              />
+            }
+          />
 
-        {/* Dynamic Tab Views */}
-        <div className="container">
-          {activeTab === 'catalog' && (
-            <CelestialCatalog
-              planets={PLANETS}
-              favorites={favorites}
-              onToggleFavorite={handleToggleFavorite}
-              onInspectPlanet={(planet) => setInspectingPlanet(planet)}
-            />
-          )}
+          {/* Rota Dinâmica com Parâmetros :id (Aula 09 - React Router useParams) */}
+          <Route
+            path="/planeta/:id"
+            element={
+              <PlanetDetailPage
+                onSelectForLaunch={handleSelectForLaunch}
+              />
+            }
+          />
 
-          {activeTab === 'simulator' && (
-            <GravitySimulator
-              planets={PLANETS}
-              onVirtualDomUpdate={handleVirtualDomUpdate}
-            />
-          )}
+          {/* Rota Estática: Simulador Gravitacional (Virtual DOM) */}
+          <Route
+            path="/simulador"
+            element={
+              <div className="container page-view-wrapper">
+                <GravitySimulator
+                  planets={PLANETS}
+                  onVirtualDomUpdate={handleVirtualDomUpdate}
+                />
+              </div>
+            }
+          />
 
-          {activeTab === 'launch' && (
-            <MissionLaunchCenter
-              planets={PLANETS}
-              missions={missions}
-              onAddMission={handleAddMission}
-              onRemoveMission={handleRemoveMission}
-              onPingMission={handlePingMission}
-              presetPlanetId={launchPresetId}
-            />
-          )}
+          {/* Rota Estática: Centro de Ignição e Lançamentos (Formulários Controlados) */}
+          <Route
+            path="/lancamentos"
+            element={
+              <div className="container page-view-wrapper">
+                <MissionLaunchCenter
+                  planets={PLANETS}
+                  missions={missions}
+                  onAddMission={handleAddMission}
+                  onRemoveMission={handleRemoveMission}
+                  onPingMission={handlePingMission}
+                  presetPlanetId={launchPresetId}
+                />
+              </div>
+            }
+          />
 
-          {activeTab === 'didactic' && (
-            <ReactDidacticLab />
-          )}
-        </div>
+          {/* Rota Estática: Observatório & Consumo de APIs (GET/POST/useEffect/Cleanup) */}
+          <Route
+            path="/api-observatorio"
+            element={<ObservatoryApiPage />}
+          />
+
+          {/* Rota Estática: Laboratório Didático React */}
+          <Route
+            path="/laboratorio-didatico"
+            element={
+              <div className="container page-view-wrapper">
+                <ReactDidacticLab />
+              </div>
+            }
+          />
+
+          {/* Rota Coringa 404 para URLs não mapeadas */}
+          <Route
+            path="*"
+            element={<NotFoundPage />}
+          />
+        </Routes>
       </main>
 
-      {/* Detail Modal */}
+      {/* Modal de Inspeção Rápida */}
       {inspectingPlanet && (
         <PlanetModal
           planet={inspectingPlanet}
@@ -185,11 +225,8 @@ export default function App() {
         />
       )}
 
-      {/* Footer */}
-      <Footer onNavigate={(tab) => {
-        setActiveTab(tab);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }} />
+      {/* Footer Global */}
+      <Footer />
     </div>
   );
 }
