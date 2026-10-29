@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Orbit, ExternalLink, Shield } from 'lucide-react';
 
-export default function Footer({ onNavigate }) {
+export default function Footer() {
   return (
     <footer className="footer-container">
       <div className="container footer-inner">
@@ -14,7 +15,7 @@ export default function Footer({ onNavigate }) {
               <span className="brand-name">STELLAR<span className="text-cyan">HUB</span></span>
             </div>
             <p className="footer-text">
-              Plataforma de exploração cósmica desenvolvida com as melhores práticas de engenharia de software em React, componentização modular, fluxo de dados via props e reconciliação declarativa.
+              Plataforma de exploração cósmica desenvolvida com as melhores práticas de engenharia de software em React, componentização modular, gerenciamento com useState, efeitos com useEffect, consumo assíncrono de APIs e roteamento com React Router.
             </p>
             <div className="badge badge-emerald">
               <Shield size={12} />
@@ -22,29 +23,34 @@ export default function Footer({ onNavigate }) {
             </div>
           </div>
 
-          {/* Quick Navigation */}
+          {/* Quick Navigation with React Router Links */}
           <div className="footer-col">
             <h4 className="footer-heading">Módulos da Aplicação</h4>
             <ul className="footer-nav-list">
               <li>
-                <button onClick={() => onNavigate('catalog')} className="footer-link">
+                <Link to="/" className="footer-link">
                   ✦ Catálogo de Corpos Celestes
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => onNavigate('simulator')} className="footer-link">
+                <Link to="/simulador" className="footer-link">
                   ✦ Simulador Gravitacional (Virtual DOM)
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => onNavigate('launch')} className="footer-link">
+                <Link to="/lancamentos" className="footer-link">
                   ✦ Centro de Ignição e Lançamentos
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => onNavigate('didactic')} className="footer-link">
-                  ✦ Laboratório Didático de React
-                </button>
+                <Link to="/api-observatorio" className="footer-link">
+                  ✦ Observatório & Consumo de APIs (ISS)
+                </Link>
+              </li>
+              <li>
+                <Link to="/laboratorio-didatico" className="footer-link">
+                  ✦ Laboratório Didático React (Aulas 08 & 09)
+                </Link>
               </li>
             </ul>
           </div>
@@ -55,9 +61,9 @@ export default function Footer({ onNavigate }) {
             <div className="academic-info-block">
               <p><strong>Instituição:</strong> SENAI Informática</p>
               <p><strong>Disciplina:</strong> Frameworks Front-end</p>
-              <p><strong>Aula 08:</strong> Projeto React Completo</p>
+              <p><strong>Aulas:</strong> Aula 08 (React) & Aula 09 (React 02)</p>
               <p><strong>Docente:</strong> Prof. Me. Deivison S. Takatu</p>
-              <p><strong>Desenvolvedor:</strong> Nícolas Oliveira</p>
+              <p><strong>Desenvolvedor:</strong> Nícolas Oliveira Carvalho da Silva</p>
             </div>
           </div>
         </div>
@@ -65,7 +71,7 @@ export default function Footer({ onNavigate }) {
         {/* Bottom Bar */}
         <div className="footer-bottom-bar">
           <p className="copyright-text font-mono">
-            © {new Date().getFullYear()} Stellar Hub • Construído com React, JSX, Props & Virtual DOM.
+            © {new Date().getFullYear()} Stellar Hub • Construído com React 19, React Router, Hooks & APIs.
           </p>
           <div className="footer-links-row">
             <a 

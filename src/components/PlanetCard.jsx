@@ -1,5 +1,6 @@
 import React from 'react';
-import { Heart, Eye, Orbit, Thermometer, Compass, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Heart, Eye, Orbit, Thermometer, Compass, Sparkles, ExternalLink } from 'lucide-react';
 
 export default function PlanetCard({ 
   planet, 
@@ -103,15 +104,24 @@ export default function PlanetCard({
       </div>
 
       {/* Card Action Footer */}
-      <div className="card-footer">
+      <div className="card-footer card-footer-split">
         <button 
           className="btn-inspect" 
           onClick={() => onInspect(planet)}
           aria-label={`Inspecionar dados de ${name}`}
+          title="Abrir telemetria em modal rápido"
         >
-          <Eye size={16} />
-          <span>Telemetria Completa</span>
+          <Eye size={15} />
+          <span>Telemetria</span>
         </button>
+        <Link 
+          to={`/planeta/${id}`}
+          className="btn-route-link"
+          title={`Acessar página dedicada com useParams: /planeta/${id}`}
+        >
+          <span>Página Rota</span>
+          <ExternalLink size={13} />
+        </Link>
       </div>
     </article>
   );

@@ -1,12 +1,11 @@
 import React from 'react';
-import { Sparkles, Compass, Rocket, Globe, ShieldCheck, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Sparkles, Compass, Rocket, Globe, ShieldCheck, Zap, Radio } from 'lucide-react';
 
 export default function Hero({ 
   totalPlanets = 8, 
   totalMissions = 5, 
-  vdomCycles = 0, 
-  onExploreClick, 
-  onSimulateClick 
+  vdomCycles = 0 
 }) {
   return (
     <section className="hero-section">
@@ -16,7 +15,7 @@ export default function Hero({
         <div className="hero-badge-wrapper">
           <div className="badge badge-cyan animate-pulse-glow">
             <Sparkles size={13} />
-            <span>SENAI Frameworks Front-end • Aula 08</span>
+            <span>SENAI Frameworks Front-end • Aulas 08 & 09 (React & React 02)</span>
           </div>
         </div>
 
@@ -27,21 +26,27 @@ export default function Hero({
         <p className="hero-description">
           Uma plataforma interativa que une astronomia e engenharia de software moderna.
           Construída para demonstrar na prática os pilares fundamentais do React: 
-          <strong> JSX</strong>, <strong>Componentização</strong>, <strong>Props</strong>, 
-          <strong> Virtual DOM</strong>, <strong>Listas com Keys</strong> e 
-          <strong> Renderização Condicional</strong>.
+          <strong> JSX</strong>, <strong>Componentes</strong>, <strong>Props</strong>, 
+          <strong> Virtual DOM</strong>, <strong>Listas com Keys</strong>, 
+          <strong> Renderização Condicional</strong>, <strong>useState</strong>, 
+          <strong> Formulários Controlados</strong>, <strong>useEffect & Cleanup</strong>, 
+          <strong> Consumo de APIs</strong> e <strong>React Router</strong>.
         </p>
 
-        {/* Action Buttons */}
+        {/* Action Buttons via React Router Links */}
         <div className="hero-actions">
-          <button className="btn btn-primary" onClick={onExploreClick}>
+          <a href="#catalogo" className="btn btn-primary">
             <Compass size={18} />
             <span>Explorar Catálogo Celeste</span>
-          </button>
-          <button className="btn btn-secondary" onClick={onSimulateClick}>
+          </a>
+          <Link to="/simulador" className="btn btn-secondary">
             <Zap size={18} />
             <span>Simulador do Virtual DOM</span>
-          </button>
+          </Link>
+          <Link to="/api-observatorio" className="btn btn-secondary">
+            <Radio size={18} />
+            <span>Observatório & APIs</span>
+          </Link>
         </div>
 
         {/* Real-Time Telemetry Stats Row */}
