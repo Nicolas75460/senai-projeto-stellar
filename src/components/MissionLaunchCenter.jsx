@@ -22,7 +22,7 @@ export default function MissionLaunchCenter({
   onPingMission,
   presetPlanetId = null 
 }) {
-  // Launch state machine: 'STANDBY' | 'CHECKING' | 'COUNTDOWN' | 'SUCCESS' | 'ABORTED'
+  // launch state machine: 'STANDBY' | 'CHECKING' | 'COUNTDOWN' | 'SUCCESS' | 'ABORTED'
   const [stage, setStage] = useState('STANDBY');
   const [probeName, setProbeName] = useState('Sonda Estelar Pioneer-X');
   const [targetId, setTargetId] = useState(presetPlanetId || 'marte');
@@ -30,6 +30,15 @@ export default function MissionLaunchCenter({
   const [missionObjective, setMissionObjective] = useState('Varredura espectroscópica e mapeamento de recursos voláteis');
   const [countdown, setCountdown] = useState(5);
   const [checkProgress, setCheckProgress] = useState({ fuel: 0, telemetry: 0, trajectory: 0 });
+  const [nameError, setNameError] = useState('');
+
+  // Sincroniza o título da aba do navegador via useEffect
+  useEffect(() => {
+    document.title = 'Centro de Lançamentos & Formulários | Stellar Hub';
+    return () => {
+      document.title = 'Stellar Hub | Exploração Espacial & React Lab';
+    };
+  }, []);
 
   // Update target when preset changes
   useEffect(() => {
@@ -89,7 +98,12 @@ export default function MissionLaunchCenter({
   }, [stage, countdown, probeName, targetId, priority, missionObjective, planets, onAddMission]);
 
   const handleStartLaunch = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Impede o recarregamento padrão da página (Aula 09)
+    if (!probeName.trim() || probeName.trim().length < 3) {
+      setNameError('O nome da sonda deve ter pelo menos 3 caracteres.');
+      return;
+    }
+    setNameError('');
     setCheckProgress({ fuel: 0, telemetry: 0, trajectory: 0 });
     setCountdown(5);
     setStage('CHECKING');
@@ -151,12 +165,17 @@ export default function MissionLaunchCenter({
                 <input
                   id="probe-name"
                   type="text"
-                  className="form-input"
+                  className={`form-input ${nameError ? 'input-error' : ''}`}
                   value={probeName}
-                  onChange={(e) => setProbeName(e.target.value)}
+                  onChange={(e) => {
+                    setProbeName(e.target.value);
+                    if (nameError) setNameError('');
+                  }}
                   placeholder="Nome da missão espacial..."
-                  required
                 />
+                {nameError && (
+                  <span className="field-error-msg">{nameError}</span>
+                )}
               </div>
 
               <div className="form-row-two">

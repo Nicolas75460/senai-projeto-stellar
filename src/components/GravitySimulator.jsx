@@ -38,6 +38,24 @@ export default function GravitySimulator({
   const jumpHeight = ((jumpVelocity * jumpVelocity) / (2 * gravity)).toFixed(2); // h = v² / (2g)
   const hangTime = ((2 * jumpVelocity) / gravity).toFixed(2); // t = 2v / g
 
+  // useEffect com Sincronização de título e Listener de Redimensionamento com CLEANUP
+  useEffect(() => {
+    document.title = `Simulador Gravitacional (${currentPlanet.name}) | Stellar Hub`;
+
+    const handleWindowResize = () => {
+      // Ajuste dinâmico quando a viewport muda
+      setLastDiffTime(new Date().toLocaleTimeString());
+    };
+
+    window.addEventListener('resize', handleWindowResize);
+
+    // Função de limpeza (cleanup) do useEffect (Conceito da Aula 09)
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+      document.title = 'Stellar Hub | Exploração Espacial & React Lab';
+    };
+  }, [currentPlanet.name]);
+
   // Trigger reconciliation tracking on state change
   useEffect(() => {
     setReconciliationCount((prev) => {
